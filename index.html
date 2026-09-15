@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopify Product Data Generator</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #171a21;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #635bff;
+      --primary-dark: #4f46e5;
+      --danger: #dc2626;
+      --success: #15803d;
+      --warning: #b45309;
+      --shadow: 0 12px 35px rgba(17, 24, 39, .08);
+      --radius: 18px;
+    }
+    a {
+      color: #4f46e5;
+    }
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(99, 91, 255, .10), transparent 30%),
+        radial-gradient(circle at 90% 0%, rgba(16, 185, 129, .08), transparent 28%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 54px 0 28px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr .8fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid #dedcff;
+      border-radius: 999px;
+      background: #f2f1ff;
+      color: #4f46e5;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+
+    h1 {
+      font-size: clamp(38px, 6vw, 68px);
+      line-height: .98;
+      margin: 18px 0 16px;
+      letter-spacing: -.04em;
+    }
+
+    .lead {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .hero-card {
+      background: linear-gradient(145deg, #111827, #29256d);
+      color: white;
+      border-radius: 28px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card strong {
+      display: block;
+      font-size: 42px;
+      margin-bottom: 6px;
+    }
+
+    .hero-card p {
+      margin: 0;
+      color: rgba(255,255,255,.75);
+      line-height: 1.5;
+    }
+
+    main {
+      padding: 12px 0 60px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(229,231,235,.85);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .card-head {
+      padding: 22px 24px 0;
+    }
+
+    .card-head h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .card-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .card-body {
+      padding: 22px 24px 24px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    textarea, input[type="number"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: .2s ease;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 200px;
+      padding: 15px;
+      line-height: 1.55;
+    }
+
+    input[type="number"] {
+      padding: 12px 14px;
+      height: 46px;
+    }
+
+    textarea:focus, input[type="number"]:focus {
+      border-color: #9b96ff;
+      box-shadow: 0 0 0 4px rgba(99,91,255,.10);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .field-note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 7px;
+      line-height: 1.45;
+    }
+
+    .check-row {
+      margin-top: 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px;
+      background: #fafafa;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+    }
+
+    .check-row input {
+      margin-top: 3px;
+      transform: scale(1.15);
+    }
+
+    .check-row span {
+      color: #374151;
+      line-height: 1.45;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 17px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease, background .15s ease;
+    }
+
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:disabled { cursor: not-allowed; opacity: .5; }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .primary:hover:not(:disabled) { background: var(--primary-dark); }
+
+    .secondary {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .danger {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+
+    .status {
+      display: none;
+    }
+
+    .status.show { display: block; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      background: #fafafa;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 26px;
+      margin-bottom: 3px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .progress {
+      height: 10px;
+      background: #eceef3;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 12px 0 18px;
+    }
+
+    .progress > div {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #635bff, #8b5cf6);
+      transition: width .25s ease;
+    }
+
+    .log {
+      max-height: 310px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #0f172a;
+      color: #d1d5db;
+      padding: 12px;
+      font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      white-space: pre-wrap;
+    }
+
+    .downloads {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .download-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+    }
+
+    .download-meta strong { display: block; }
+    .download-meta small { color: var(--muted); }
+
+    .notice {
+      margin-top: 16px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .notice.warn {
+      background: #fff7ed;
+      color: #9a3412;
+      border: 1px solid #fed7aa;
+    }
+
+    .notice.ok {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      padding: 16px 0 40px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 760px) {
+      header { padding-top: 32px; }
+      .hero, .grid { grid-template-columns: 1fr; }
+      .hero-card { display: none; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .download-item { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <div>
+        <div class="badge">SHOPIFY PRODUCT DATA GENERATOR</div>
+        <h1>Public Shopify products → import-ready CSV</h1>
+        <h2>by <a href="https://www.linkedin.com/in/hasan112/">HASAN</a></h2>
+        <p class="lead">
+          Add as many Shopify store URLs as you want. This page fetches public product data in 250-item pages,
+          combines variants and images, then builds Shopify CSV files directly in your browser.
+        </p>
+      </div>
+      <div class="hero-card">
+        <strong>∞ URLs</strong>
+        <p>No artificial 5-store limit. No artificial 250-product total limit. Public data is paginated automatically.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="card-head">
+        <h2>Generate product data</h2>
+        <p>Enter one Shopify store URL per line. You can paste a homepage or any page from the store.</p>
+      </div>
+      <div class="card-body">
+        <label for="urls">Shopify store URLs</label>
+        <textarea id="urls" spellcheck="false" placeholder="https://store-one.com&#10;https://store-two.myshopify.com&#10;https://another-store.com/products/example"></textarea>
+
+        <div class="grid">
+          <div>
+            <label for="limit">Products per store</label>
+            <input id="limit" type="number" min="0" step="1" value="0" />
+            <div class="field-note">0 = fetch all public products found. Any positive number acts as an optional cap.</div>
+          </div>
+          <div>
+            <label for="workers">Stores processed at once</label>
+            <input id="workers" type="number" min="1" max="8" step="1" value="2" />
+            <div class="field-note">2–3 is polite and reliable. Higher values can trigger rate limits.</div>
+          </div>
+        </div>
+
+        <label class="check-row">
+          <input id="prefixHandles" type="checkbox" checked />
+          <span>
+            <strong>Avoid handle collisions across stores.</strong><br />
+            When multiple stores are used, prefix handles with the source domain so same-named products don't merge during import.
+          </span>
+        </label>
+
+        <div class="actions">
+          <button id="generateBtn" class="primary">Generate CSV</button>
+          <button id="stopBtn" class="danger" disabled>Stop</button>
+          <button id="clearBtn" class="secondary">Clear</button>
+        </div>
+
+        <div class="notice warn">
+          Browser-only limitation: a store can block <code>/products.json</code>, require a password, use bot protection,
+          or disallow cross-origin browser requests. This page does not bypass those protections.
+        </div>
+      </div>
+    </section>
+
+    <section id="statusCard" class="card status">
+      <div class="card-head">
+        <h2>Progress</h2>
+        <p id="statusText">Preparing…</p>
+      </div>
+      <div class="card-body">
+        <div class="stats">
+          <div class="stat"><b id="storesStat">0</b><span>Stores done</span></div>
+          <div class="stat"><b id="productsStat">0</b><span>Products</span></div>
+          <div class="stat"><b id="variantsStat">0</b><span>Variants</span></div>
+          <div class="stat"><b id="filesStat">0</b><span>CSV parts</span></div>
+        </div>
+        <div class="progress"><div id="progressBar"></div></div>
+        <div id="log" class="log"></div>
+      </div>
+    </section>
+
+    <section id="downloadCard" class="card status">
+      <div class="card-head">
+        <h2>Downloads</h2>
+        <p>Large exports are automatically split to stay under Shopify's CSV upload size limit.</p>
+      </div>
+      <div class="card-body">
+        <div class="actions" style="margin-top:0">
+          <button id="downloadAllBtn" class="primary">Download all CSV parts</button>
+        </div>
+        <div id="downloads" class="downloads"></div>
+        <div class="notice ok">
+          CSV is generated locally in your browser. Product descriptions and image URLs can belong to third parties;
+          use data you have permission to use, especially outside development/testing.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Single-file HTML/CSS/JavaScript tool. No framework, no external library, no backend.
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const els = {
+        urls: document.getElementById("urls"),
+        limit: document.getElementById("limit"),
+        workers: document.getElementById("workers"),
+        prefixHandles: document.getElementById("prefixHandles"),
+        generateBtn: document.getElementById("generateBtn"),
+        stopBtn: document.getElementById("stopBtn"),
+        clearBtn: document.getElementById("clearBtn"),
+        statusCard: document.getElementById("statusCard"),
+        downloadCard: document.getElementById("downloadCard"),
+        statusText: document.getElementById("statusText"),
+        storesStat: document.getElementById("storesStat"),
+        productsStat: document.getElementById("productsStat"),
+        variantsStat: document.getElementById("variantsStat"),
+        filesStat: document.getElementById("filesStat"),
+        progressBar: document.getElementById("progressBar"),
+        log: document.getElementById("log"),
+        downloads: document.getElementById("downloads"),
+        downloadAllBtn: document.getElementById("downloadAllBtn")
+      };
+
+      const state = {
+        running: false,
+        cancelled: false,
+        activeControllers: new Set(),
+        products: [],
+        completedStores: 0,
+        totalStores: 0,
+        downloads: []
+      };
+
+      const CSV_HEADERS = [
+        "URL handle",
+        "Title",
+        "Description",
+        "Vendor",
+        "Product category",
+        "Type",
+        "Tags",
+        "Published on online store",
+        "Status",
+        "SKU",
+        "Barcodes",
+        "Option1 name",
+        "Option1 value",
+        "Option2 name",
+        "Option2 value",
+        "Option3 name",
+        "Option3 value",
+        "Price",
+        "Compare-at price",
+        "Charge tax",
+        "Inventory tracker",
+        "Inventory quantity",
+        "Continue selling when out of stock",
+        "Weight value (grams)",
+        "Weight unit for display",
+        "Requires shipping",
+        "Fulfillment service",
+        "Product image URL",
+        "Image position",
+        "Image alt text",
+        "Variant image URL",
+        "Gift card",
+        "SEO title",
+        "SEO description"
+      ];
+
+      function log(message, type = "info") {
+        const stamp = new Date().toLocaleTimeString();
+        const marker = type === "error" ? "✖" : type === "ok" ? "✔" : type === "warn" ? "!" : "•";
+        els.log.textContent += `[${stamp}] ${marker} ${message}\n`;
+        els.log.scrollTop = els.log.scrollHeight;
+      }
+
+      function setRunning(running) {
+        state.running = running;
+        els.generateBtn.disabled = running;
+        els.stopBtn.disabled = !running;
+        els.urls.disabled = running;
+        els.limit.disabled = running;
+        els.workers.disabled = running;
+        els.prefixHandles.disabled = running;
+      }
+
+      function updateStats() {
+        els.storesStat.textContent = state.completedStores.toLocaleString();
+        els.productsStat.textContent = state.products.length.toLocaleString();
+
+        const variants = state.products.reduce((sum, item) => {
+          return sum + Math.max(1, Array.isArray(item.product.variants) ? item.product.variants.length : 0);
+        }, 0);
+        els.variantsStat.textContent = variants.toLocaleString();
+        els.filesStat.textContent = state.downloads.length.toLocaleString();
+
+        const pct = state.totalStores
+          ? Math.min(100, Math.round((state.completedStores / state.totalStores) * 100))
+          : 0;
+        els.progressBar.style.width = pct + "%";
+      }
+
+      function normalizeStoreUrl(raw) {
+        let value = raw.trim();
+        if (!value) return null;
+        if (!/^https?:\/\//i.test(value)) value = "https://" + value;
+
+        const u = new URL(value);
+        if (!["http:", "https:"].includes(u.protocol)) {
+          throw new Error("Only http/https URLs are supported.");
+        }
+
+        return {
+          origin: u.origin,
+          hostname: u.hostname.toLowerCase(),
+          key: u.origin.toLowerCase()
+        };
+      }
+
+      function getStoreList() {
+        const seen = new Set();
+        const out = [];
+
+        for (const line of els.urls.value.split(/\r?\n/)) {
+          const raw = line.trim();
+          if (!raw) continue;
+
+          try {
+            const store = normalizeStoreUrl(raw);
+            if (!store || seen.has(store.key)) continue;
+            seen.add(store.key);
+            out.push(store);
+          } catch (err) {
+            log(`Skipped invalid URL: ${raw} (${err.message})`, "warn");
+          }
+        }
+        return out;
+      }
+
+      function slugify(value) {
+        return String(value || "")
+          .toLowerCase()
+          .trim()
+          .replace(/^www\./, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 70);
+      }
+
+      function uniqueProductKey(product) {
+        return String(product.id ?? product.handle ?? `${product.title}-${product.published_at ?? ""}`);
+      }
+
+      async function fetchJson(url) {
+        if (state.cancelled) throw new DOMException("Cancelled", "AbortError");
+
+        const controller = new AbortController();
+        state.activeControllers.add(controller);
+        const timer = setTimeout(() => controller.abort(), 30000);
+
+        try {
+          const response = await fetch(url, {
+            method: "GET",
+            mode: "cors",
+            credentials: "omit",
+            cache: "no-store",
+            headers: { "Accept": "application/json" },
+            signal: controller.signal
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status} ${response.statusText}`);
+          }
+
+          const contentType = response.headers.get("content-type") || "";
+          if (!contentType.includes("json")) {
+            const text = await response.text();
+            if (/password/i.test(text)) throw new Error("Store appears password protected.");
+            throw new Error("Expected JSON but received another response type.");
+          }
+
+          return await response.json();
+        } finally {
+          clearTimeout(timer);
+          state.activeControllers.delete(controller);
+        }
+      }
+
+      async function fetchStoreProducts(store, optionalCap) {
+        const collected = [];
+        const seen = new Set();
+        let page = 1;
+        const pageSize = 250;
+
+        log(`Starting ${store.hostname}`);
+
+        while (!state.cancelled) {
+          const remaining = optionalCap > 0 ? optionalCap - collected.length : pageSize;
+          if (optionalCap > 0 && remaining <= 0) break;
+
+          const requestLimit = Math.min(pageSize, optionalCap > 0 ? remaining : pageSize);
+          const endpoint = `${store.origin}/products.json?limit=${requestLimit}&page=${page}`;
+
+          log(`${store.hostname}: page ${page}, requesting up to ${requestLimit} products`);
+
+          let data;
+          try {
+            data = await fetchJson(endpoint);
+          } catch (err) {
+            if (err.name === "AbortError" && state.cancelled) throw err;
+
+            // Helpful fallback for stores that prefer a .json route with an explicit full path.
+            if (page === 1) {
+              throw new Error(`${store.hostname}: ${err.message}`);
+            }
+            log(`${store.hostname}: stopped on page ${page} (${err.message})`, "warn");
+            break;
+          }
+
+          const batch = Array.isArray(data?.products) ? data.products : [];
+          if (!batch.length) {
+            log(`${store.hostname}: no more products found.`);
+            break;
+          }
+
+          let newCount = 0;
+          for (const product of batch) {
+            const key = uniqueProductKey(product);
+            if (seen.has(key)) continue;
+            seen.add(key);
+            collected.push(product);
+            newCount++;
+            if (optionalCap > 0 && collected.length >= optionalCap) break;
+          }
+
+          log(`${store.hostname}: received ${batch.length}, ${newCount} new.`);
+
+          // Protect against endpoints that ignore ?page= and keep returning the same 250 items forever.
+          if (newCount === 0) {
+            log(`${store.hostname}: pagination repeated the same products; stopping to avoid an infinite loop.`, "warn");
+            break;
+          }
+
+          if (batch.length < requestLimit || (optionalCap > 0 && collected.length >= optionalCap)) break;
+          page++;
+        }
+
+        log(`${store.hostname}: finished with ${collected.length} product(s).`, "ok");
+        return collected;
+      }
+
+      async function runPool(items, workerCount, task) {
+        let index = 0;
+
+        async function worker() {
+          while (!state.cancelled) {
+            const current = index++;
+            if (current >= items.length) return;
+            await task(items[current], current);
+          }
+        }
+
+        const workers = Array.from(
+          { length: Math.min(workerCount, items.length) },
+          () => worker()
+        );
+
+        await Promise.allSettled(workers);
+      }
+
+      function textTags(tags) {
+        if (Array.isArray(tags)) return tags.join(", ");
+        return String(tags ?? "");
+      }
+
+      function variantImageUrl(variant) {
+        const image = variant?.featured_image;
+        if (!image) return "";
+        if (typeof image === "string") return image;
+        return image.src || image.url || "";
+      }
+
+      function productImageUrl(image) {
+        if (!image) return "";
+        if (typeof image === "string") return image;
+        return image.src || image.url || "";
+      }
+
+      function buildHandle(product, sourceHost, usePrefix) {
+        const base = slugify(product.handle || product.title || product.id || "product");
+        if (!usePrefix) return base;
+        const source = slugify(sourceHost.replace(/\.myshopify\.com$/i, ""));
+        return `${source}-${base}`.slice(0, 120);
+      }
+
+      function emptyRow() {
+        return Object.fromEntries(CSV_HEADERS.map(h => [h, ""]));
+      }
+
+      function buildRows(items, usePrefix) {
+        const rows = [];
+
+        for (const item of items) {
+          const product = item.product;
+          const handle = buildHandle(product, item.store.hostname, usePrefix);
+          const variants = Array.isArray(product.variants) && product.variants.length
+            ? product.variants
+            : [{}];
+          const options = Array.isArray(product.options) ? product.options : [];
+          const images = Array.isArray(product.images) ? product.images : [];
+
+          variants.forEach((variant, variantIndex) => {
+            const row = emptyRow();
+            const first = variantIndex === 0;
+
+            row["URL handle"] = handle;
+
+            if (first) {
+              row["Title"] = product.title ?? "";
+              row["Description"] = product.body_html ?? "";
+              row["Vendor"] = product.vendor ?? "";
+              row["Type"] = product.product_type ?? "";
+              row["Tags"] = textTags(product.tags);
+              row["Published on online store"] = "true";
+              row["Status"] = "active";
+
+              if (images[0]) {
+                row["Product image URL"] = productImageUrl(images[0]);
+                row["Image position"] = images[0].position ?? 1;
+                row["Image alt text"] = images[0].alt ?? product.title ?? "";
+              }
+            }
+
+            const option1Name = options[0]?.name || "Title";
+            const option1Value = variant.option1 || variant.title || "Default Title";
+
+            row["Option1 name"] = option1Name;
+            row["Option1 value"] = option1Value;
+
+            if (options[1] || variant.option2) {
+              row["Option2 name"] = options[1]?.name || "Option 2";
+              row["Option2 value"] = variant.option2 || "";
+            }
+
+            if (options[2] || variant.option3) {
+              row["Option3 name"] = options[2]?.name || "Option 3";
+              row["Option3 value"] = variant.option3 || "";
+            }
+
+            row["SKU"] = variant.sku ?? "";
+            row["Barcodes"] = variant.barcode ?? "";
+            row["Price"] = variant.price ?? "";
+            row["Compare-at price"] = variant.compare_at_price ?? "";
+            row["Charge tax"] = typeof variant.taxable === "boolean" ? String(variant.taxable) : "true";
+            row["Inventory tracker"] = "";
+            row["Inventory quantity"] = "";
+            row["Continue selling when out of stock"] = "deny";
+            row["Weight value (grams)"] = variant.grams ?? "";
+            row["Weight unit for display"] = variant.weight_unit ?? "g";
+            row["Requires shipping"] =
+              typeof variant.requires_shipping === "boolean" ? String(variant.requires_shipping) : "true";
+            row["Fulfillment service"] = "manual";
+            row["Variant image URL"] = variantImageUrl(variant);
+            row["Gift card"] = "false";
+
+            rows.push(row);
+          });
+
+          // Add product image-only rows for remaining images.
+          for (let i = 1; i < images.length; i++) {
+            const image = images[i];
+            const row = emptyRow();
+            row["URL handle"] = handle;
+            row["Product image URL"] = productImageUrl(image);
+            row["Image position"] = image.position ?? (i + 1);
+            row["Image alt text"] = image.alt ?? product.title ?? "";
+            rows.push(row);
+          }
+        }
+
+        return rows;
+      }
+
+      function csvEscape(value) {
+        const s = value == null ? "" : String(value);
+        return `"${s.replace(/"/g, '""')}"`;
+      }
+
+      function rowToCsv(row) {
+        return CSV_HEADERS.map(h => csvEscape(row[h])).join(",");
+      }
+
+      function byteSize(text) {
+        return new TextEncoder().encode(text).length;
+      }
+
+      function splitCsv(rows, maxBytes = 14 * 1024 * 1024) {
+        const headerLine = CSV_HEADERS.map(csvEscape).join(",");
+        const parts = [];
+        let current = [headerLine];
+        let currentBytes = byteSize(headerLine + "\n");
+
+        for (const row of rows) {
+          const line = rowToCsv(row);
+          const lineBytes = byteSize(line + "\n");
+
+          if (current.length > 1 && currentBytes + lineBytes > maxBytes) {
+            parts.push(current.join("\n"));
+            current = [headerLine];
+            currentBytes = byteSize(headerLine + "\n");
+          }
+
+          current.push(line);
+          currentBytes += lineBytes;
+        }
+
+        if (current.length > 1) parts.push(current.join("\n"));
+        return parts;
+      }
+
+      function humanBytes(bytes) {
+        if (bytes < 1024) return `${bytes} B`;
+        if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+        return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+      }
+
+      function makeDownload(partText, index, total) {
+        const blob = new Blob(["\uFEFF", partText], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const fileName = total === 1
+          ? "shopify-products.csv"
+          : `shopify-products-part-${String(index + 1).padStart(2, "0")}-of-${String(total).padStart(2, "0")}.csv`;
+
+        return { blob, url, fileName };
+      }
+
+      function cleanupDownloads() {
+        for (const item of state.downloads) {
+          try { URL.revokeObjectURL(item.url); } catch (_) {}
+        }
+        state.downloads = [];
+        els.downloads.innerHTML = "";
+        els.downloadCard.classList.remove("show");
+        updateStats();
+      }
+
+      function renderDownloads(parts) {
+        cleanupDownloads();
+
+        state.downloads = parts.map((part, index) => makeDownload(part, index, parts.length));
+        els.downloads.innerHTML = "";
+
+        state.downloads.forEach(item => {
+          const row = document.createElement("div");
+          row.className = "download-item";
+
+          const meta = document.createElement("div");
+          meta.className = "download-meta";
+          meta.innerHTML = `<strong>${item.fileName}</strong><small>${humanBytes(item.blob.size)}</small>`;
+
+          const btn = document.createElement("button");
+          btn.className = "secondary";
+          btn.textContent = "Download";
+          btn.addEventListener("click", () => triggerDownload(item));
+
+          row.append(meta, btn);
+          els.downloads.appendChild(row);
+        });
+
+        els.downloadCard.classList.add("show");
+        updateStats();
+      }
+
+      function triggerDownload(item) {
+        const a = document.createElement("a");
+        a.href = item.url;
+        a.download = item.fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+
+      async function generate() {
+        if (state.running) return;
+
+        cleanupDownloads();
+        state.cancelled = false;
+        state.products = [];
+        state.completedStores = 0;
+        state.totalStores = 0;
+        els.log.textContent = "";
+        els.statusText.textContent = "Reading store list…";
+        els.statusCard.classList.add("show");
+        updateStats();
+
+        const stores = getStoreList();
+        if (!stores.length) {
+          log("Add at least one valid store URL.", "error");
+          els.statusText.textContent = "No valid store URLs.";
+          return;
+        }
+
+        state.totalStores = stores.length;
+        const cap = Math.max(0, parseInt(els.limit.value || "0", 10) || 0);
+        const workers = Math.min(8, Math.max(1, parseInt(els.workers.value || "2", 10) || 2));
+
+        setRunning(true);
+        els.statusText.textContent = `Processing ${stores.length} store(s)…`;
+        log(`Found ${stores.length} unique store URL(s).`);
+        log(cap ? `Optional product cap: ${cap} per store.` : "No artificial product cap is enabled.");
+
+        try {
+          await runPool(stores, workers, async (store) => {
+            if (state.cancelled) return;
+
+            try {
+              const products = await fetchStoreProducts(store, cap);
+              for (const product of products) {
+                state.products.push({ store, product });
+              }
+            } catch (err) {
+              if (!(err.name === "AbortError" && state.cancelled)) {
+                log(err.message || String(err), "error");
+              }
+            } finally {
+              state.completedStores++;
+              updateStats();
+            }
+          });
+
+          if (state.cancelled) {
+            els.statusText.textContent = "Stopped by user.";
+            log("Generation stopped.", "warn");
+            return;
+          }
+
+          if (!state.products.length) {
+            els.statusText.textContent = "No products could be fetched.";
+            log("No public product data was collected.", "error");
+            return;
+          }
+
+          els.statusText.textContent = "Building Shopify CSV…";
+          log(`Building rows from ${state.products.length} product(s)…`);
+
+          const shouldPrefix = els.prefixHandles.checked && stores.length > 1;
+          const rows = buildRows(state.products, shouldPrefix);
+          const parts = splitCsv(rows);
+
+          renderDownloads(parts);
+
+          els.statusText.textContent =
+            `Done: ${state.products.length.toLocaleString()} products, ${rows.length.toLocaleString()} CSV rows, ${parts.length} file(s).`;
+          log(`Created ${rows.length.toLocaleString()} CSV row(s) in ${parts.length} part(s).`, "ok");
+        } catch (err) {
+          els.statusText.textContent = "Generation failed.";
+          log(err.message || String(err), "error");
+        } finally {
+          setRunning(false);
+          updateStats();
+        }
+      }
+
+      function stop() {
+        if (!state.running) return;
+        state.cancelled = true;
+        for (const controller of state.activeControllers) controller.abort();
+        state.activeControllers.clear();
+        els.statusText.textContent = "Stopping…";
+      }
+
+      function clearAll() {
+        if (state.running) return;
+        els.urls.value = "";
+        els.log.textContent = "";
+        state.products = [];
+        state.completedStores = 0;
+        state.totalStores = 0;
+        cleanupDownloads();
+        els.statusCard.classList.remove("show");
+        updateStats();
+      }
+
+      els.generateBtn.addEventListener("click", generate);
+      els.stopBtn.addEventListener("click", stop);
+      els.clearBtn.addEventListener("click", clearAll);
+
+      els.downloadAllBtn.addEventListener("click", () => {
+        state.downloads.forEach((item, i) => {
+          setTimeout(() => triggerDownload(item), i * 350);
+        });
+      });
+
+      window.addEventListener("beforeunload", cleanupDownloads);
+    })();
+  </script>
+</body>
+</html>
